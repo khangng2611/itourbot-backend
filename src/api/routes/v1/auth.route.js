@@ -4,7 +4,7 @@ import * as controller from '../../controllers/auth.controller.js';
 import { oAuth as oAuthLogin } from '../../middlewares/auth.js';
 import authValidation from '../../validations/auth.validation.js';
 
-const authRoutes = express.authRoutes();
+const authRouter = express.Router();
 
 /**
  * @api {post} v1/auth/register Register
@@ -33,7 +33,7 @@ const authRoutes = express.authRoutes();
  *
  * @apiError (Bad Request 400)  ValidationError  Some parameters may contain invalid values
  */
-authRoutes.route('/register')
+authRouter.route('/register')
   .post(validate(authValidation.register), controller.register);
 
 /**
@@ -63,7 +63,7 @@ authRoutes.route('/register')
  * @apiError (Bad Request 400)  ValidationError  Some parameters may contain invalid values
  * @apiError (Unauthorized 401)  Unauthorized     Incorrect email or password
  */
-authRoutes.route('/login')
+authRouter.route('/login')
   .post(validate(authValidation.login), controller.login);
 
 /**
@@ -85,13 +85,13 @@ authRoutes.route('/login')
  * @apiError (Bad Request 400)  ValidationError  Some parameters may contain invalid values
  * @apiError (Unauthorized 401)  Unauthorized     Incorrect email or refreshToken
  */
-authRoutes.route('/refresh-token')
+authRouter.route('/refresh-token')
   .post(validate(authValidation.refresh), controller.refresh);
 
-authRoutes.route('/send-password-reset')
+authRouter.route('/send-password-reset')
   .post(validate(authValidation.sendPasswordReset), controller.sendPasswordReset);
 
-authRoutes.route('/reset-password')
+authRouter.route('/reset-password')
   .post(validate(authValidation.passwordReset), controller.resetPassword);
 
 /**
@@ -112,7 +112,7 @@ authRoutes.route('/reset-password')
  * @apiError (Bad Request 400)  ValidationError  Some parameters may contain invalid values
  * @apiError (Unauthorized 401)  Unauthorized    Incorrect access_token
  */
-authRoutes.route('/facebook')
+authRouter.route('/facebook')
   .post(validate(authValidation.oAuth), oAuthLogin('facebook'), controller.oAuth);
 
 /**
@@ -133,7 +133,7 @@ authRoutes.route('/facebook')
  * @apiError (Bad Request 400)  ValidationError  Some parameters may contain invalid values
  * @apiError (Unauthorized 401)  Unauthorized    Incorrect access_token
  */
-authRoutes.route('/google')
+authRouter.route('/google')
   .post(validate(authValidation.oAuth), oAuthLogin('google'), controller.oAuth);
 
-module.exports = authRoutes;
+export default authRouter;

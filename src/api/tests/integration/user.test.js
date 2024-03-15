@@ -8,7 +8,7 @@ import bcrypt from 'bcryptjs';
 import { some, omitBy, isNil } from 'lodash';
 import app from '../../../index.js';
 import User from '../../models/user.model.js';
-import vars from '../../../config/vars.js';
+import config from '../../../config/config.js';
 /**
  * root level hooks
  */
@@ -533,7 +533,7 @@ describe('Users API', async () => {
       const expiredAccessToken = (await User.findAndGenerateToken(dbUsers.branStark)).accessToken;
 
       // move clock forward by minutes set in config + 1 minute
-      clock.tick((vars.jwtExpirationInterval * 60000) + 60000);
+      clock.tick((config.jwtExpirationInterval * 60000) + 60000);
 
       return request(app)
         .get('/v1/users/profile')

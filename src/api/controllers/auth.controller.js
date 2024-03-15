@@ -4,7 +4,7 @@ import _ from 'lodash';
 import User from '../models/user.model.js';
 import RefreshToken from '../models/refreshToken.model.js';
 import PasswordResetToken from '../models/passwordResetToken.model.js';
-import vars from '../../config/vars.js';
+import config from '../../config/config.js';
 import APIError from '../errors/api-error.js';
 import * as emailProvider from '../services/emails/emailProvider.js';
 
@@ -15,7 +15,7 @@ import * as emailProvider from '../services/emails/emailProvider.js';
 function generateTokenResponse(user, accessToken) {
   const tokenType = 'Bearer';
   const refreshToken = RefreshToken.generate(user).token;
-  const expiresIn = moment().add(vars.jwtExpirationInterval, 'minutes');
+  const expiresIn = moment().add(config.jwtExpirationInterval, 'minutes');
   return {
     tokenType,
     accessToken,

@@ -6,8 +6,9 @@ import moment from 'moment-timezone';
 import jwt from 'jwt-simple';
 import pkg from 'uuid';
 import APIError from '../errors/api-error.js';
-import vars from '../../config/vars.js';
+import config from '../../config/config.js';
 
+const { env, jwtExpirationInterval, jwtSecret } = config;
 const { v4: uuidv4 } = pkg;
 
 /**
@@ -67,7 +68,7 @@ userSchema.pre('save', async function save(next) {
   try {
     if (!this.isModified('password')) return next();
 
-    const rounds = vars.env === 'test' ? 1 : 10;
+    const rounds = env === 'test' ? 1 : 10;
 
     const hash = await bcrypt.hash(this.password, rounds);
     this.password = hash;
@@ -95,11 +96,11 @@ userSchema.method({
 
   token() {
     const payload = {
-      exp: moment().add(vars.jwtExpirationInterval, 'minutes').unix(),
+      exp: moment().add(jwtExpirationInterval, 'minutes').unix(),
       iat: moment().unix(),
       sub: this._id,
     };
-    return jwt.encode(payload, vars.jwtSecret);
+    return jwt.encode(payload, jwtSecret);
   },
 
   async passwordMatches(password) {

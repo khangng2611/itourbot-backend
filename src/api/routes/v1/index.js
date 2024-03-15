@@ -1,6 +1,6 @@
 import express from 'express';
-import userRoutes from './user.route.js';
-import authRoutes from './auth.route.js';
+import userRouter from './user.route.js';
+import authRouter from './auth.route.js';
 
 const router = express.Router();
 
@@ -14,7 +14,7 @@ router.get('/status', (req, res) => res.send('OK'));
  */
 router.use('/docs', express.static('docs'));
 
-router.use('/users', userRoutes);
-router.use('/auth', authRoutes);
+router.use('/users', userRouter);
+router.use('/auth', authRouter);
 
-module.exports = router;
+export default router;

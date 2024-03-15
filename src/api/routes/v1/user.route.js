@@ -4,14 +4,14 @@ import * as controller from '../../controllers/user.controller.js';
 import { authorize, ADMIN, LOGGED_USER } from '../../middlewares/auth.js';
 import userValidaion from '../../validations/user.validation.js';
 
-const userRoutes = express.userRoutes();
+const userRouter = express.Router();
 
 /**
  * Load user when API with userId route parameter is hit
  */
-userRoutes.param('userId', controller.load);
+userRouter.param('userId', controller.load);
 
-userRoutes
+userRouter
   .route('/')
   /**
    * @api {get} v1/users List Users
@@ -62,7 +62,7 @@ userRoutes
    */
   .post(authorize(ADMIN), validate(userValidaion.createUser), controller.create);
 
-userRoutes
+userRouter
   .route('/profile')
   /**
    * @api {get} v1/users/profile User Profile
@@ -84,7 +84,7 @@ userRoutes
    */
   .get(authorize(), controller.loggedIn);
 
-userRoutes
+userRouter
   .route('/:userId')
   /**
    * @api {get} v1/users/:id Get User
@@ -181,4 +181,4 @@ userRoutes
    */
   .delete(authorize(LOGGED_USER), controller.remove);
 
-export default userRoutes;
+export default userRouter;

@@ -1,8 +1,9 @@
 import bluebird from 'bluebird'; // eslint-disable-line no-global-assign
 import mongoose from 'mongoose';
 import logger from './logger.js';
-import vars from './vars.js';
+import config from './config.js';
 
+const { env, mongo } = config;
 // set mongoose Promise to Bluebird
 const { Promise } = bluebird;
 mongoose.Promise = Promise;
@@ -14,7 +15,7 @@ mongoose.connection.on('error', (err) => {
 });
 
 // print mongoose logs in dev env
-if (vars.env === 'development') {
+if (env === 'development') {
   mongoose.set('debug', true);
 }
 
@@ -24,16 +25,16 @@ if (vars.env === 'development') {
  * @returns {object} Mongoose connection
  * @public
  */
-export default function connect() {
+export default function mongooseConnect() {
   mongoose
-    .connect(vars.mongo.uri, {
+    .connect(mongo.uri, {
       useCreateIndex: true,
       keepAlive: 1,
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useFindAndModify: false,
     })
-    .then(() => console.log('mongoDB connected...'))
+    .then(() => console.log('MongoDB connected !'))
     .catch((error) => {
       console.error('MongoDB connection error:', error);
       process.exit(-1);

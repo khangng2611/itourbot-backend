@@ -6,8 +6,8 @@ import methodOverride from 'method-override';
 import cors from 'cors';
 import helmet from 'helmet';
 import passport from 'passport';
-import vars from './vars.js';
-// import routes from '../api/routes/v1';
+import config from './config.js';
+import router from '../api/routes/v1/index.js';
 import * as strategies from './passport.js';
 import * as error from '../api/middlewares/error.js';
 
@@ -18,7 +18,7 @@ import * as error from '../api/middlewares/error.js';
 const app = express();
 
 // request logging. dev: console | production: file
-app.use(morgan(vars.logs));
+app.use(morgan(config.logs));
 
 // parse body params and attache them to req.body
 app.use(bodyParser.json());
@@ -44,7 +44,7 @@ passport.use('facebook', strategies.facebook);
 passport.use('google', strategies.google);
 
 // mount api v1 routes
-// app.use('/v1', routes);
+app.use('/v1', router);
 
 // if error is not an instanceOf APIError, convert it.
 app.use(error.converter);

@@ -8,7 +8,7 @@ dotenv.config({
   example: path.join(__dirname, '../../.env.example'),
 });
 
-const vars = {
+export default {
   env: process.env.NODE_ENV,
   port: process.env.PORT,
   jwtSecret: process.env.JWT_SECRET,
@@ -24,5 +24,3 @@ const vars = {
     password: process.env.EMAIL_PASSWORD,
   },
 };
-
-export default vars;
