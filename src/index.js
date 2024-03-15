@@ -1,9 +1,9 @@
 // make bluebird default Promise
 // import {Promise} from 'bluebird'; // eslint-disable-line no-global-assign
-import vars from './config/vars';
-import logger from './config/logger';
-import app from './config/express';
-import connect from './config/mongoose';
+import vars from './config/vars.js';
+import logger from './config/logger.js';
+import app from './config/express.js';
+import connect from './config/mongoose.js';
 
 // open mongoose connection
 connect();

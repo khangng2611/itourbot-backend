@@ -1,15 +1,15 @@
 /* eslint-disable arrow-body-style */
-const request = require('supertest');
-const httpStatus = require('http-status');
-const { expect } = require('chai');
-const sinon = require('sinon');
-const moment = require('moment-timezone');
-const app = require('../../../index');
-const User = require('../../models/user.model');
-const RefreshToken = require('../../models/refreshToken.model');
-const PasswordResetToken = require('../../models/passwordResetToken.model');
-const authProviders = require('../../services/authProviders');
-const emailProvider = require('../../services/emails/emailProvider');
+import request from 'supertest';
+import HttpStatus from 'http-status';
+import { expect } from 'chai';
+import sinon from 'sinon';
+import moment from 'moment-timezone';
+import app from '../../../index.js';
+import User from '../../models/user.model.js';
+import RefreshToken from '../../models/refreshToken.model.js';
+import PasswordResetToken from '../../models/passwordResetToken.model.js';
+import authProviders from '../../services/authProviders.js';
+import emailProvider from '../../services/emails/emailProvider.js';
 
 const sandbox = sinon.createSandbox();
 
@@ -96,7 +96,7 @@ describe('Authentication API', () => {
       return request(app)
         .post('/v1/auth/register')
         .send(user)
-        .expect(httpStatus.CREATED)
+        .expect(HttpStatus.CREATED)
         .then((res) => {
           delete user.password;
           expect(res.body.token).to.have.a.property('accessToken');
@@ -110,7 +110,7 @@ describe('Authentication API', () => {
       return request(app)
         .post('/v1/auth/register')
         .send(dbUser)
-        .expect(httpStatus.CONFLICT)
+        .expect(HttpStatus.CONFLICT)
         .then((res) => {
           const { field } = res.body.errors[0];
           const { location } = res.body.errors[0];
@@ -126,7 +126,7 @@ describe('Authentication API', () => {
       return request(app)
         .post('/v1/auth/register')
         .send(user)
-        .expect(httpStatus.BAD_REQUEST)
+        .expect(HttpStatus.BAD_REQUEST)
         .then((res) => {
           const { field } = res.body.errors[0];
           const { location } = res.body.errors[0];
@@ -141,7 +141,7 @@ describe('Authentication API', () => {
       return request(app)
         .post('/v1/auth/register')
         .send({})
-        .expect(httpStatus.BAD_REQUEST)
+        .expect(HttpStatus.BAD_REQUEST)
         .then((res) => {
           const { field } = res.body.errors[0];
           const { location } = res.body.errors[0];
@@ -158,7 +158,7 @@ describe('Authentication API', () => {
       return request(app)
         .post('/v1/auth/login')
         .send(dbUser)
-        .expect(httpStatus.OK)
+        .expect(HttpStatus.OK)
         .then((res) => {
           delete dbUser.password;
           expect(res.body.token).to.have.a.property('accessToken');
@@ -172,7 +172,7 @@ describe('Authentication API', () => {
       return request(app)
         .post('/v1/auth/login')
         .send({})
-        .expect(httpStatus.BAD_REQUEST)
+        .expect(HttpStatus.BAD_REQUEST)
         .then((res) => {
           const { field } = res.body.errors[0];
           const { location } = res.body.errors[0];
@@ -188,7 +188,7 @@ describe('Authentication API', () => {
       return request(app)
         .post('/v1/auth/login')
         .send(user)
-        .expect(httpStatus.BAD_REQUEST)
+        .expect(HttpStatus.BAD_REQUEST)
         .then((res) => {
           const { field } = res.body.errors[0];
           const { location } = res.body.errors[0];
@@ -204,7 +204,7 @@ describe('Authentication API', () => {
       return request(app)
         .post('/v1/auth/login')
         .send(dbUser)
-        .expect(httpStatus.UNAUTHORIZED)
+        .expect(HttpStatus.UNAUTHORIZED)
         .then((res) => {
           const { code } = res.body;
           const { message } = res.body;
@@ -220,7 +220,7 @@ describe('Authentication API', () => {
       return request(app)
         .post('/v1/auth/facebook')
         .send({ access_token: '123' })
-        .expect(httpStatus.OK)
+        .expect(HttpStatus.OK)
         .then((res) => {
           expect(res.body.token).to.have.a.property('accessToken');
           expect(res.body.token).to.have.a.property('refreshToken');
@@ -236,7 +236,7 @@ describe('Authentication API', () => {
       return request(app)
         .post('/v1/auth/facebook')
         .send({ access_token: '123' })
-        .expect(httpStatus.OK)
+        .expect(HttpStatus.OK)
         .then((res) => {
           expect(res.body.token).to.have.a.property('accessToken');
           expect(res.body.token).to.have.a.property('refreshToken');
@@ -248,7 +248,7 @@ describe('Authentication API', () => {
     it('should return error when access_token is not provided', async () => {
       return request(app)
         .post('/v1/auth/facebook')
-        .expect(httpStatus.BAD_REQUEST)
+        .expect(HttpStatus.BAD_REQUEST)
         .then((res) => {
           const { field } = res.body.errors[0];
           const { location } = res.body.errors[0];
@@ -266,7 +266,7 @@ describe('Authentication API', () => {
       return request(app)
         .post('/v1/auth/google')
         .send({ access_token: '123' })
-        .expect(httpStatus.OK)
+        .expect(HttpStatus.OK)
         .then((res) => {
           expect(res.body.token).to.have.a.property('accessToken');
           expect(res.body.token).to.have.a.property('refreshToken');
@@ -282,7 +282,7 @@ describe('Authentication API', () => {
       return request(app)
         .post('/v1/auth/google')
         .send({ access_token: '123' })
-        .expect(httpStatus.OK)
+        .expect(HttpStatus.OK)
         .then((res) => {
           expect(res.body.token).to.have.a.property('accessToken');
           expect(res.body.token).to.have.a.property('refreshToken');
@@ -294,7 +294,7 @@ describe('Authentication API', () => {
     it('should return error when access_token is not provided', async () => {
       return request(app)
         .post('/v1/auth/google')
-        .expect(httpStatus.BAD_REQUEST)
+        .expect(HttpStatus.BAD_REQUEST)
         .then((res) => {
           const { field } = res.body.errors[0];
           const { location } = res.body.errors[0];
@@ -312,7 +312,7 @@ describe('Authentication API', () => {
       return request(app)
         .post('/v1/auth/refresh-token')
         .send({ email: dbUser.email, refreshToken: refreshToken.token })
-        .expect(httpStatus.OK)
+        .expect(HttpStatus.OK)
         .then((res) => {
           expect(res.body).to.have.a.property('accessToken');
           expect(res.body).to.have.a.property('refreshToken');
@@ -325,7 +325,7 @@ describe('Authentication API', () => {
       return request(app)
         .post('/v1/auth/refresh-token')
         .send({ email: user.email, refreshToken: refreshToken.token })
-        .expect(httpStatus.UNAUTHORIZED)
+        .expect(HttpStatus.UNAUTHORIZED)
         .then((res) => {
           const { code } = res.body;
           const { message } = res.body;
@@ -338,7 +338,7 @@ describe('Authentication API', () => {
       return request(app)
         .post('/v1/auth/refresh-token')
         .send({})
-        .expect(httpStatus.BAD_REQUEST)
+        .expect(HttpStatus.BAD_REQUEST)
         .then((res) => {
           const field1 = res.body.errors[0].field;
           const location1 = res.body.errors[0].location;
@@ -361,7 +361,7 @@ describe('Authentication API', () => {
       return request(app)
         .post('/v1/auth/refresh-token')
         .send({ email: dbUser.email, refreshToken: expiredRefreshToken.token })
-        .expect(httpStatus.UNAUTHORIZED)
+        .expect(HttpStatus.UNAUTHORIZED)
         .then((res) => {
           expect(res.body.code).to.be.equal(401);
           expect(res.body.message).to.be.equal('Invalid refresh token.');
@@ -386,7 +386,7 @@ describe('Authentication API', () => {
       return request(app)
         .post('/v1/auth/send-password-reset')
         .send({ email: dbUser.email })
-        .expect(httpStatus.OK)
+        .expect(HttpStatus.OK)
         .then((res) => {
           expect(res.body).to.be.equal('success');
         });
@@ -397,11 +397,11 @@ describe('Authentication API', () => {
       return request(app)
         .post('/v1/auth/send-password-reset')
         .send({ email: user.email })
-        .expect(httpStatus.UNAUTHORIZED)
+        .expect(HttpStatus.UNAUTHORIZED)
         .then((res) => {
           const { code } = res.body;
           const { message } = res.body;
-          expect(code).to.be.equal(httpStatus.UNAUTHORIZED);
+          expect(code).to.be.equal(HttpStatus.UNAUTHORIZED);
           expect(message).to.be.equal('No account found with that email');
         });
     });
@@ -410,7 +410,7 @@ describe('Authentication API', () => {
       return request(app)
         .post('/v1/auth/send-password-reset')
         .send({})
-        .expect(httpStatus.BAD_REQUEST)
+        .expect(HttpStatus.BAD_REQUEST)
         .then((res) => {
           const field1 = res.body.errors[0].field;
           const location1 = res.body.errors[0].location;
@@ -436,7 +436,7 @@ describe('Authentication API', () => {
           password: 'updatedPassword2',
           resetToken: resetToken.resetToken,
         })
-        .expect(httpStatus.OK)
+        .expect(HttpStatus.OK)
         .then((res) => {
           expect(res.body).to.be.equal('Password Updated');
         });
@@ -450,7 +450,7 @@ describe('Authentication API', () => {
           password: 'updatedPassword',
           resetToken: resetToken.resetToken,
         })
-        .expect(httpStatus.UNAUTHORIZED)
+        .expect(HttpStatus.UNAUTHORIZED)
         .then((res) => {
           const { code } = res.body;
           const { message } = res.body;
@@ -463,7 +463,7 @@ describe('Authentication API', () => {
       return request(app)
         .post('/v1/auth/reset-password')
         .send({ password: 'updatedPassword', resetToken: resetToken.resetToken })
-        .expect(httpStatus.BAD_REQUEST)
+        .expect(HttpStatus.BAD_REQUEST)
         .then((res) => {
           const field1 = res.body.errors[0].field;
           const location1 = res.body.errors[0].location;
@@ -477,7 +477,7 @@ describe('Authentication API', () => {
       return request(app)
         .post('/v1/auth/reset-password')
         .send({ email: dbUser.email, password: 'updatedPassword' })
-        .expect(httpStatus.BAD_REQUEST)
+        .expect(HttpStatus.BAD_REQUEST)
         .then((res) => {
           const field1 = res.body.errors[0].field;
           const location1 = res.body.errors[0].location;
@@ -491,7 +491,7 @@ describe('Authentication API', () => {
       return request(app)
         .post('/v1/auth/reset-password')
         .send({ email: dbUser.email, resetToken: resetToken.resetToken })
-        .expect(httpStatus.BAD_REQUEST)
+        .expect(HttpStatus.BAD_REQUEST)
         .then((res) => {
           const field1 = res.body.errors[0].field;
           const location1 = res.body.errors[0].location;
@@ -517,7 +517,7 @@ describe('Authentication API', () => {
           password: 'updated password',
           resetToken: expiredResetToken.resetToken,
         })
-        .expect(httpStatus.UNAUTHORIZED)
+        .expect(HttpStatus.UNAUTHORIZED)
         .then((res) => {
           expect(res.body.code).to.be.equal(401);
           expect(res.body.message).to.include('Reset token is expired');

@@ -1,7 +1,7 @@
 import HttpStatus from 'http-status';
 import expressValidation from 'express-validation';
-import APIError from '../errors/api-error';
-import vars from '../../config/vars';
+import APIError from '../errors/api-error.js';
+import vars from '../../config/vars.js';
 
 /**
  * Error handler. Send stacktrace only during development

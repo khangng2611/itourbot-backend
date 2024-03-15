@@ -1,7 +1,7 @@
 import Joi from 'joi';
-import User from '../models/user.model';
+import User from '../models/user.model.js';
 
-export default {
+const userValidation = {
 
   // GET /v1/users
   listUsers: {
@@ -50,3 +50,5 @@ export default {
     },
   },
 };
+
+export default userValidation;

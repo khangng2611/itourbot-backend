@@ -6,10 +6,10 @@ import methodOverride from 'method-override';
 import cors from 'cors';
 import helmet from 'helmet';
 import passport from 'passport';
-import vars from './vars';
+import vars from './vars.js';
 // import routes from '../api/routes/v1';
-import * as strategies from './passport';
-import * as error from '../api/middlewares/error';
+import * as strategies from './passport.js';
+import * as error from '../api/middlewares/error.js';
 
 /**
 * Express instance

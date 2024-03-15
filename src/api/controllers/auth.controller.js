@@ -1,12 +1,12 @@
 import HttpStatus from 'http-status';
 import moment from 'moment-timezone';
 import _ from 'lodash';
-import User from '../models/user.model';
-import RefreshToken from '../models/refreshToken.model';
-import PasswordResetToken from '../models/passwordResetToken.model';
-import vars from '../../config/vars';
-import APIError from '../errors/api-error';
-import emailProvider from '../services/emails/emailProvider';
+import User from '../models/user.model.js';
+import RefreshToken from '../models/refreshToken.model.js';
+import PasswordResetToken from '../models/passwordResetToken.model.js';
+import vars from '../../config/vars.js';
+import APIError from '../errors/api-error.js';
+import * as emailProvider from '../services/emails/emailProvider.js';
 
 /**
  * Returns a formated object with tokens

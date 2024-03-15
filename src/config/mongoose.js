@@ -1,7 +1,7 @@
 import bluebird from 'bluebird'; // eslint-disable-line no-global-assign
 import mongoose from 'mongoose';
-import logger from './logger';
-import vars from './vars';
+import logger from './logger.js';
+import vars from './vars.js';
 
 // set mongoose Promise to Bluebird
 const { Promise } = bluebird;

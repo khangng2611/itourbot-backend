@@ -1,22 +1,17 @@
-const express = require('express');
-const validate = require('express-validation');
-const controller = require('../../controllers/user.controller');
-const { authorize, ADMIN, LOGGED_USER } = require('../../middlewares/auth');
-const {
-  listUsers,
-  createUser,
-  replaceUser,
-  updateUser,
-} = require('../../validations/user.validation');
+import express from 'express';
+import validate from 'express-validation';
+import * as controller from '../../controllers/user.controller.js';
+import { authorize, ADMIN, LOGGED_USER } from '../../middlewares/auth.js';
+import userValidaion from '../../validations/user.validation.js';
 
-const router = express.Router();
+const userRoutes = express.userRoutes();
 
 /**
  * Load user when API with userId route parameter is hit
  */
-router.param('userId', controller.load);
+userRoutes.param('userId', controller.load);
 
-router
+userRoutes
   .route('/')
   /**
    * @api {get} v1/users List Users
@@ -39,7 +34,7 @@ router
    * @apiError (Unauthorized 401)  Unauthorized  Only authenticated users can access the data
    * @apiError (Forbidden 403)     Forbidden     Only admins can access the data
    */
-  .get(authorize(ADMIN), validate(listUsers), controller.list)
+  .get(authorize(ADMIN), validate(userValidaion.listUsers), controller.list)
   /**
    * @api {post} v1/users Create User
    * @apiDescription Create a new user
@@ -65,9 +60,9 @@ router
    * @apiError (Unauthorized 401)  Unauthorized     Only authenticated users can create the data
    * @apiError (Forbidden 403)     Forbidden        Only admins can create the data
    */
-  .post(authorize(ADMIN), validate(createUser), controller.create);
+  .post(authorize(ADMIN), validate(userValidaion.createUser), controller.create);
 
-router
+userRoutes
   .route('/profile')
   /**
    * @api {get} v1/users/profile User Profile
@@ -89,7 +84,7 @@ router
    */
   .get(authorize(), controller.loggedIn);
 
-router
+userRoutes
   .route('/:userId')
   /**
    * @api {get} v1/users/:id Get User
@@ -139,7 +134,7 @@ router
    * @apiError (Forbidden 403)    Forbidden    Only user with same id or admins can modify the data
    * @apiError (Not Found 404)    NotFound     User does not exist
    */
-  .put(authorize(LOGGED_USER), validate(replaceUser), controller.replace)
+  .put(authorize(LOGGED_USER), validate(userValidaion.replaceUser), controller.replace)
   /**
    * @api {patch} v1/users/:id Update User
    * @apiDescription Update some fields of a user document
@@ -167,7 +162,7 @@ router
    * @apiError (Forbidden 403)    Forbidden    Only user with same id or admins can modify the data
    * @apiError (Not Found 404)    NotFound     User does not exist
    */
-  .patch(authorize(LOGGED_USER), validate(updateUser), controller.update)
+  .patch(authorize(LOGGED_USER), validate(userValidaion.updateUser), controller.update)
   /**
    * @api {patch} v1/users/:id Delete User
    * @apiDescription Delete a user
@@ -186,4 +181,4 @@ router
    */
   .delete(authorize(LOGGED_USER), controller.remove);
 
-module.exports = router;
+export default userRoutes;

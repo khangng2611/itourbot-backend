@@ -1,6 +1,6 @@
 import HttpStatus from 'http-status';
 import _ from 'lodash';
-import User from '../models/user.model';
+import User from '../models/user.model.js';
 
 /**
  * Load user and append to req.

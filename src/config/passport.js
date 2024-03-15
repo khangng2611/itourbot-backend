@@ -1,8 +1,8 @@
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import { Strategy as BearerStrategy } from 'passport-http-bearer';
-import vars from './vars';
-import * as authProviders from '../api/services/authProviders';
-import User from '../api/models/user.model';
+import vars from './vars.js';
+import * as authProviders from '../api/services/authProviders.js';
+import User from '../api/models/user.model.js';
 
 const jwtOptions = {
   secretOrKey: vars.jwtSecret,

@@ -50,4 +50,4 @@ jspm_packages
 services/
 .travis.yml
 deploy.sh
-/.DS_Store
+.DS_Store

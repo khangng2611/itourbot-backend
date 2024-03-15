@@ -1,7 +1,7 @@
 import HttpStatus from 'http-status';
 import passport from 'passport';
-import User from '../models/user.model';
-import APIError from '../errors/api-error';
+import User from '../models/user.model.js';
+import APIError from '../errors/api-error.js';
 
 export const ADMIN = 'admin';
 export const LOGGED_USER = '_loggedUser';

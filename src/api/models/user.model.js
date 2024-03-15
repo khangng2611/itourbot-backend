@@ -5,8 +5,8 @@ import bcrypt from 'bcryptjs';
 import moment from 'moment-timezone';
 import jwt from 'jwt-simple';
 import pkg from 'uuid';
-import APIError from '../errors/api-error';
-import vars from '../../config/vars';
+import APIError from '../errors/api-error.js';
+import vars from '../../config/vars.js';
 
 const { v4: uuidv4 } = pkg;
 
