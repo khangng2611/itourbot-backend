@@ -6,7 +6,7 @@ import RefreshToken from '../models/refreshToken.model.js';
 import PasswordResetToken from '../models/passwordResetToken.model.js';
 import config from '../../config/config.js';
 import APIError from '../errors/api-error.js';
-import * as emailProvider from '../services/emails/emailProvider.js';
+// import * as emailProvider from '../services/emails/emailProvider.js';
 
 /**
  * Returns a formated object with tokens
@@ -57,23 +57,6 @@ export const login = async (req, res, next) => {
 };
 
 /**
- * login with an existing user or creates a new one if valid accessToken token
- * Returns jwt token
- * @public
- */
-export const oAuth = async (req, res, next) => {
-  try {
-    const { user } = req;
-    const accessToken = user.token();
-    const token = generateTokenResponse(user, accessToken);
-    const userTransformed = user.transform();
-    return res.json({ token, user: userTransformed });
-  } catch (error) {
-    return next(error);
-  }
-};
-
-/**
  * Returns a new jwt when given a valid refresh token
  * @public
  */
@@ -84,7 +67,20 @@ export const refresh = async (req, res, next) => {
       userEmail: email,
       token: refreshToken,
     });
+    const err = {
+      status: HttpStatus.UNAUTHORIZED,
+      isPublic: true,
+    };
+    if (!refreshObject) {
+      err.message = 'Incorrect email or refresh token.';
+      throw new APIError(err);
+    }
+    if (moment().isAfter(refreshObject.expires)) {
+      err.message = 'Refresh token is expired';
+      throw new APIError(err);
+    }
     const { user, accessToken } = await User.findAndGenerateToken({ email, refreshObject });
+
     const response = generateTokenResponse(user, accessToken);
     return res.json(response);
   } catch (error) {
@@ -98,8 +94,8 @@ export const sendPasswordReset = async (req, res, next) => {
     const user = await User.findOne({ email }).exec();
 
     if (user) {
-      const passwordResetObj = await PasswordResetToken.generate(user);
-      emailProvider.sendPasswordReset(passwordResetObj);
+      // const passwordResetObj = await PasswordResetToken.generate(user);
+      // emailProvider.sendPasswordReset(passwordResetObj);
       res.status(HttpStatus.OK);
       return res.json('success');
     }
@@ -136,10 +132,28 @@ export const resetPassword = async (req, res, next) => {
     const user = await User.findOne({ email: resetTokenObject.userEmail }).exec();
     user.password = password;
     await user.save();
-    emailProvider.sendPasswordChangeEmail(user);
+    // emailProvider.sendPasswordChangeEmail(user);
 
     res.status(HttpStatus.OK);
     return res.json('Password Updated');
+  } catch (error) {
+    return next(error);
+  }
+};
+
+/**
+ * login with an existing user or creates a new one if valid accessToken token
+ * Returns jwt token
+ * @public
+ */
+export const oAuth = async (req, res, next) => {
+  try {
+    console.log(req.user);
+    const { user } = req;
+    const accessToken = user.token();
+    const token = generateTokenResponse(user, accessToken);
+    const userTransformed = user.transform();
+    return res.json({ token, user: userTransformed });
   } catch (error) {
     return next(error);
   }

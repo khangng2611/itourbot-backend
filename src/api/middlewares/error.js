@@ -40,6 +40,7 @@ export const converter = (err, req, res, next) => {
   } else if (!(err instanceof APIError)) {
     convertedError = new APIError({
       message: err.message,
+      errors: err.errors,
       status: err.status,
       stack: err.stack,
     });

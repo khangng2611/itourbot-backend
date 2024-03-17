@@ -1,7 +1,7 @@
 import express from 'express';
 import validate from 'express-validation';
 import * as controller from '../../controllers/auth.controller.js';
-import { oAuth as oAuthLogin } from '../../middlewares/auth.js';
+import { oAuth, oAuthCallback } from '../../middlewares/auth.js';
 import authValidation from '../../validations/auth.validation.js';
 
 const authRouter = express.Router();
@@ -113,7 +113,9 @@ authRouter.route('/reset-password')
  * @apiError (Unauthorized 401)  Unauthorized    Incorrect access_token
  */
 authRouter.route('/facebook')
-  .post(validate(authValidation.oAuth), oAuthLogin('facebook'), controller.oAuth);
+  .get(oAuth('facebook'));
+authRouter.route('/facebook/callback')
+  .get(oAuthCallback('facebook'), controller.oAuth);
 
 /**
  * @api {post} v1/auth/google Google Login
@@ -134,6 +136,8 @@ authRouter.route('/facebook')
  * @apiError (Unauthorized 401)  Unauthorized    Incorrect access_token
  */
 authRouter.route('/google')
-  .post(validate(authValidation.oAuth), oAuthLogin('google'), controller.oAuth);
+  .get(oAuth('google'));
+authRouter.route('/google/callback')
+  .get(oAuthCallback('google'), controller.oAuth);
 
 export default authRouter;

@@ -1,12 +1,23 @@
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
-import { Strategy as BearerStrategy } from 'passport-http-bearer';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import { Strategy as FacebookStrategy } from 'passport-facebook';
 import config from './config.js';
-import * as authProviders from '../api/services/authProviders.js';
 import User from '../api/models/user.model.js';
 
-const jwtOptions = {
+const jwtConfigs = {
   secretOrKey: config.jwtSecret,
   jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('Bearer'),
+};
+
+const googleConfigs = {
+  ...config.googleConfig,
+  callbackURL: 'http://localhost:3000/v1/auth/google/callback',
+};
+
+const facebookConfigs = {
+  ...config.facebookConfig,
+  callbackURL: 'http://localhost:3000/v1/auth/facebook/callback',
+  profileFields: ['id', 'displayName', 'emails'], // Optional: Specify desired profile fields
 };
 
 const JWT = async (payload, done) => {
@@ -19,9 +30,17 @@ const JWT = async (payload, done) => {
   }
 };
 
-const oAuth = (service) => async (token, done) => {
+const oAuthGoogle = async (accessToken, refreshToken, profile, done) => {
   try {
-    const userData = await authProviders[service](token);
+    if (!profile) {
+      done(new Error('Failed to retrieve user profile'));
+    }
+    const userData = {
+      service: 'google',
+      id: profile.id,
+      name: profile.displayName,
+      email: profile.emails[0].value,
+    };
     const user = await User.oAuthLogin(userData);
     return done(null, user);
   } catch (err) {
@@ -29,6 +48,25 @@ const oAuth = (service) => async (token, done) => {
   }
 };
 
-export const jwt = new JwtStrategy(jwtOptions, JWT);
-export const facebook = new BearerStrategy(oAuth('facebook'));
-export const google = new BearerStrategy(oAuth('google'));
+const oAuthFacebook = async (accessToken, refreshToken, profile, done) => {
+  try {
+    if (!profile) {
+      done(new Error('Failed to retrieve user profile'));
+    }
+    console.log(profile);
+    const userData = {
+      service: 'facebook',
+      id: profile.id,
+      name: profile.displayName,
+      email: profile.emails[0].value,
+    };
+    const user = await User.oAuthLogin(userData);
+    return done(null, user);
+  } catch (err) {
+    return done(err);
+  }
+};
+
+export const jwt = new JwtStrategy(jwtConfigs, JWT);
+export const google = new GoogleStrategy(googleConfigs, oAuthGoogle);
+export const facebook = new FacebookStrategy(facebookConfigs, oAuthFacebook);

@@ -50,10 +50,6 @@ const userSchema = new mongoose.Schema({
     enum: roles,
     default: 'user',
   },
-  picture: {
-    type: String,
-    trim: true,
-  },
 }, {
   timestamps: true,
 });
@@ -64,7 +60,7 @@ const userSchema = new mongoose.Schema({
  * - validations
  * - virtuals
  */
-userSchema.pre('save', async function save(next) {
+userSchema.pre('save', async function presave(next) {
   try {
     if (!this.isModified('password')) return next();
 
@@ -83,9 +79,10 @@ userSchema.pre('save', async function save(next) {
  * Methods
  */
 userSchema.method({
+  // format fields for API responses
   transform() {
     const transformed = {};
-    const fields = ['id', 'name', 'email', 'picture', 'role', 'createdAt'];
+    const fields = ['id', 'name', 'email', 'role', 'createdAt'];
 
     fields.forEach((field) => {
       transformed[field] = this[field];
@@ -94,6 +91,7 @@ userSchema.method({
     return transformed;
   },
 
+  // return access token
   token() {
     const payload = {
       exp: moment().add(jwtExpirationInterval, 'minutes').unix(),
@@ -103,6 +101,7 @@ userSchema.method({
     return jwt.encode(payload, jwtSecret);
   },
 
+  // check password
   async passwordMatches(password) {
     return bcrypt.compare(password, this.password);
   },
@@ -152,20 +151,10 @@ userSchema.statics = {
       status: HttpStatus.UNAUTHORIZED,
       isPublic: true,
     };
-    if (password) {
-      if (user && await user.passwordMatches(password)) {
-        return { user, accessToken: user.token() };
-      }
-      err.message = 'Incorrect email or password';
-    } else if (refreshObject && refreshObject.userEmail === email) {
-      if (moment(refreshObject.expires).isBefore()) {
-        err.message = 'Invalid refresh token.';
-      } else {
-        return { user, accessToken: user.token() };
-      }
-    } else {
-      err.message = 'Incorrect email or refreshToken';
+    if ((user && password && await user.passwordMatches(password)) || refreshObject) {
+      return { user, accessToken: user.token() };
     }
+    err.message = 'Incorrect email or password';
     throw new APIError(err);
   },
 
@@ -213,18 +202,17 @@ userSchema.statics = {
   },
 
   async oAuthLogin({
-    service, id, email, name, picture,
+    service, id, name, email,
   }) {
     const user = await this.findOne({ $or: [{ [`services.${service}`]: id }, { email }] });
     if (user) {
       user.services[service] = id;
       if (!user.name) user.name = name;
-      if (!user.picture) user.picture = picture;
       return user.save();
     }
     const password = uuidv4();
     return this.create({
-      services: { [service]: id }, email, password, name, picture,
+      services: { [service]: id }, email, password, name,
     });
   },
 };

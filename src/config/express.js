@@ -27,9 +27,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // gzip compression
 app.use(compress());
 
-// lets you use HTTP verbs such as PUT or DELETE
-// in places where the client doesn't support it
-app.use(methodOverride());
+// alow override methods in 'X-HTTP-Method-Override' header
+app.use(methodOverride('X-HTTP-Method-Override'));
 
 // secure apps by setting various HTTP headers
 app.use(helmet());

@@ -8,18 +8,17 @@ import app from '../../../index.js';
 import User from '../../models/user.model.js';
 import RefreshToken from '../../models/refreshToken.model.js';
 import PasswordResetToken from '../../models/passwordResetToken.model.js';
-import authProviders from '../../services/authProviders.js';
 import emailProvider from '../../services/emails/emailProvider.js';
 
 const sandbox = sinon.createSandbox();
 
-const fakeOAuthRequest = () => Promise.resolve({
-  service: 'facebook',
-  id: '123',
-  name: 'user',
-  email: 'test@test.com',
-  picture: 'test.jpg',
-});
+// const fakeOAuthRequest = () => Promise.resolve({
+//   service: 'facebook',
+//   id: '123',
+//   name: 'user',
+//   email: 'test@test.com',
+//   picture: 'test.jpg',
+// });
 
 describe('Authentication API', () => {
   let dbUser;
@@ -216,7 +215,7 @@ describe('Authentication API', () => {
 
   describe('POST /v1/auth/facebook', () => {
     it('should create a new user and return an accessToken when user does not exist', () => {
-      sandbox.stub(authProviders, 'facebook').callsFake(fakeOAuthRequest);
+      // sandbox.stub(authProviders, 'facebook').callsFake(fakeOAuthRequest);
       return request(app)
         .post('/v1/auth/facebook')
         .send({ access_token: '123' })
@@ -232,7 +231,7 @@ describe('Authentication API', () => {
     it('should return an accessToken when user already exists', async () => {
       dbUser.email = 'test@test.com';
       await User.create(dbUser);
-      sandbox.stub(authProviders, 'facebook').callsFake(fakeOAuthRequest);
+      // sandbox.stub(authProviders, 'facebook').callsFake(fakeOAuthRequest);
       return request(app)
         .post('/v1/auth/facebook')
         .send({ access_token: '123' })
@@ -262,7 +261,7 @@ describe('Authentication API', () => {
 
   describe('POST /v1/auth/google', () => {
     it('should create a new user and return an accessToken when user does not exist', () => {
-      sandbox.stub(authProviders, 'google').callsFake(fakeOAuthRequest);
+      // sandbox.stub(authProviders, 'google').callsFake(fakeOAuthRequest);
       return request(app)
         .post('/v1/auth/google')
         .send({ access_token: '123' })
@@ -278,7 +277,7 @@ describe('Authentication API', () => {
     it('should return an accessToken when user already exists', async () => {
       dbUser.email = 'test@test.com';
       await User.create(dbUser);
-      sandbox.stub(authProviders, 'google').callsFake(fakeOAuthRequest);
+      // sandbox.stub(authProviders, 'google').callsFake(fakeOAuthRequest);
       return request(app)
         .post('/v1/auth/google')
         .send({ access_token: '123' })

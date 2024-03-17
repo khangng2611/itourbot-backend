@@ -42,8 +42,19 @@ const handleJWT = (req, res, next, roles) => async (err, user, info) => {
 };
 
 export const authorize = (roles = User.roles) => (req, res, next) => passport.authenticate(
-  'jwt', { session: false },
+  'jwt',
+  { session: false },
   handleJWT(req, res, next, roles),
 )(req, res, next);
 
-export const oAuth = (service) => passport.authenticate(service, { session: false });
+export const oAuth = (service) => passport.authenticate(
+  service,
+  service === 'google' ? { scope: ['profile', 'email'], session: false } : { scope: ['email'], session: false },
+);
+export const oAuthCallback = (service) => passport.authenticate(
+  service,
+  {
+    failureRedirect: `/v1/auth/${service}`,
+    session: false,
+  },
+);
