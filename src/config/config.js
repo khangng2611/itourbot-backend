@@ -11,12 +11,14 @@ dotenv.config({
 export default {
   env: process.env.NODE_ENV,
   port: process.env.PORT,
-  baseURL: `${process.env.BASE_HOST}:${process.env.PORT}`,
+  baseURL: `http://${process.env.BASE_HOST}:${process.env.PORT}`,
   jwtSecret: process.env.JWT_SECRET,
   jwtExpirationInterval: process.env.JWT_EXPIRATION_MINUTES,
+  refreshExpirationDays: process.env.REFRESH_TOKEN_EXPIRATION_DAYS,
   mongo: {
     uri: process.env.NODE_ENV === 'test' ? process.env.MONGO_URI_TESTS : process.env.MONGO_URI,
   },
+  redisURI: process.env.REDIS_URI,
   logs: process.env.NODE_ENV === 'production' ? 'combined' : 'dev',
   googleConfig: {
     clientID: process.env.GOOGLE_CLIENT_ID,

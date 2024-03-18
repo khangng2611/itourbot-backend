@@ -29,9 +29,7 @@ const authValidation = {
   // POST /v1/auth/refresh
   refresh: {
     body: {
-      email: Joi.string()
-        .email()
-        .required(),
+      email: Joi.string().email().required(),
       refreshToken: Joi.string().required(),
     },
   },

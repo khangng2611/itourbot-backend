@@ -11,12 +11,12 @@ const jwtConfigs = {
 
 const googleConfigs = {
   ...config.googleConfig,
-  callbackURL: 'http://localhost:3000/v1/auth/google/callback',
+  callbackURL: `${config.baseURL}/v1/auth/google/callback`,
 };
 
 const facebookConfigs = {
   ...config.facebookConfig,
-  callbackURL: 'http://localhost:3000/v1/auth/facebook/callback',
+  callbackURL: `${config.baseURL}/v1/auth/facebook/callback`,
   profileFields: ['id', 'displayName', 'emails'], // Optional: Specify desired profile fields
 };
 
@@ -44,7 +44,7 @@ const oAuthGoogle = async (accessToken, refreshToken, profile, done) => {
     const user = await User.oAuthLogin(userData);
     return done(null, user);
   } catch (err) {
-    return done(err);
+    return done(err, false);
   }
 };
 
@@ -63,7 +63,7 @@ const oAuthFacebook = async (accessToken, refreshToken, profile, done) => {
     const user = await User.oAuthLogin(userData);
     return done(null, user);
   } catch (err) {
-    return done(err);
+    return done(err, false);
   }
 };
 

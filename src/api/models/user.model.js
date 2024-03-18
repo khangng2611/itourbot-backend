@@ -143,7 +143,7 @@ userSchema.statics = {
    * @returns {Promise<User, APIError>}
    */
   async findAndGenerateToken(options) {
-    const { email, password, refreshObject } = options;
+    const { email, password, refreshToken } = options;
     if (!email) throw new APIError({ message: 'An email is required to generate a token' });
 
     const user = await this.findOne({ email }).exec();
@@ -151,7 +151,7 @@ userSchema.statics = {
       status: HttpStatus.UNAUTHORIZED,
       isPublic: true,
     };
-    if ((user && password && await user.passwordMatches(password)) || refreshObject) {
+    if ((user && password && await user.passwordMatches(password)) || refreshToken) {
       return { user, accessToken: user.token() };
     }
     err.message = 'Incorrect email or password';
@@ -165,16 +165,17 @@ userSchema.statics = {
    * @param {number} limit - Limit number of users to be returned.
    * @returns {Promise<User[]>}
    */
-  list({
+  async list({
     page = 1, perPage = 30, name, email, role,
   }) {
     const options = _.omitBy({ name, email, role }, _.isNil);
 
-    return this.find(options)
+    const result = await this.find(options)
       .sort({ createdAt: -1 })
       .skip(perPage * (page - 1))
       .limit(perPage)
       .exec();
+    return result;
   },
 
   /**

@@ -11,8 +11,7 @@ const userRouter = express.Router();
  */
 userRouter.param('userId', controller.load);
 
-userRouter
-  .route('/')
+userRouter.route('/')
   /**
    * @api {get} v1/users List Users
    * @apiDescription Get a list of users
@@ -62,8 +61,7 @@ userRouter
    */
   .post(authorize(ADMIN), validate(userValidaion.createUser), controller.create);
 
-userRouter
-  .route('/profile')
+userRouter.route('/profile')
   /**
    * @api {get} v1/users/profile User Profile
    * @apiDescription Get logged in user profile information
@@ -84,8 +82,7 @@ userRouter
    */
   .get(authorize(), controller.loggedIn);
 
-userRouter
-  .route('/:userId')
+userRouter.route('/:userId')
   /**
    * @api {get} v1/users/:id Get User
    * @apiDescription Get user information
