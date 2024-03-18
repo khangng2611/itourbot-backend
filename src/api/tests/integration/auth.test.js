@@ -6,7 +6,6 @@ import sinon from 'sinon';
 import moment from 'moment-timezone';
 import app from '../../../index.js';
 import User from '../../models/user.model.js';
-import RefreshToken from '../../models/refreshToken.model.js';
 import PasswordResetToken from '../../models/passwordResetToken.model.js';
 import emailProvider from '../../services/emails/emailProvider.js';
 
@@ -84,7 +83,6 @@ describe('Authentication API', () => {
 
     await User.deleteMany({});
     await User.create(dbUser);
-    await RefreshToken.deleteMany({});
     await PasswordResetToken.deleteMany({});
   });
 
@@ -307,7 +305,6 @@ describe('Authentication API', () => {
 
   describe('POST /v1/auth/refresh-token', () => {
     it('should return a new accessToken when refreshToken and email match', async () => {
-      await RefreshToken.create(refreshToken);
       return request(app)
         .post('/v1/auth/refresh-token')
         .send({ email: dbUser.email, refreshToken: refreshToken.token })
@@ -320,7 +317,6 @@ describe('Authentication API', () => {
     });
 
     it("should report error when email and refreshToken don't match", async () => {
-      await RefreshToken.create(refreshToken);
       return request(app)
         .post('/v1/auth/refresh-token')
         .send({ email: user.email, refreshToken: refreshToken.token })
@@ -355,8 +351,6 @@ describe('Authentication API', () => {
     });
 
     it('should report error when the refreshToken is expired', async () => {
-      await RefreshToken.create(expiredRefreshToken);
-
       return request(app)
         .post('/v1/auth/refresh-token')
         .send({ email: dbUser.email, refreshToken: expiredRefreshToken.token })
