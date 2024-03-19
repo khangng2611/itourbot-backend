@@ -1,6 +1,6 @@
-version: "2"
+version: "3"
 services:
-  boilerplate-api:
+  itourbot-api:
     command: yarn test
     environment:
       - NODE_ENV=test
