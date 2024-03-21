@@ -87,8 +87,6 @@ export const refresh = async (req, res, next) => {
       err.message = 'Incorrect email or refresh token.';
       throw new APIError(err);
     }
-    console.log('Refresh token:', refreshToken);
-    console.log('Token:', token);
     if (refreshToken !== token) {
       err.message = 'Refresh token is expired';
       throw new APIError(err);

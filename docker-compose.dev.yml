@@ -4,27 +4,20 @@ services:
     image: itourbot-api:latest
     container_name: itourbot-api
     build: .
-    command: yarn dev -L
-    environment:
-      NODE_ENV: development
-      PORT: ${PORT}
-      JWT_SECRET: ${JWT_SECRET}
-      JWT_EXPIRATION_MINUTES: ${JWT_EXPIRATION_MINUTES}
-      MONGO_URI: ${MONGO_URI}
-      MONGO_URI_TESTS: ${MONGO_URI_TESTS}
-      REDIS_URI: ${REDIS_URI}
-      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
-      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
-      FACEBOOK_APP_ID: ${FACEBOOK_APP_ID}
-      FACEBOOK_APP_SECRET: ${FACEBOOK_APP_SECRET}
-      EMAIL_PORT: ${EMAIL_PORT}
-      EMAIL_HOST: ${EMAIL_HOST}
-      EMAIL_USERNAME: ${EMAIL_USERNAME}
-      EMAIL_PASSWORD: ${EMAIL_PASSWORD}
+    command: yarn dev
+    env_file:
+      - .env
     ports:
       - "3000:3000"
     networks:
-    - itourbot
+      - itourbot
+  itourbot-redis:
+    image: redis:latest
+    container_name: itourbot-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - itourbot
 
 networks:
   itourbot:

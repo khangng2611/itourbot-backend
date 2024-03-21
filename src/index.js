@@ -6,7 +6,7 @@ import { redisConnect } from './config/redis.js';
 
 const { port, env } = config;
 
-// open mongoose connection
+// open mongoose & redis connection
 mongooseConnect();
 redisConnect();
 // listen to requests

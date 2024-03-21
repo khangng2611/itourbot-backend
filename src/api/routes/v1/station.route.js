@@ -25,7 +25,8 @@ stationRouter.route('/')
    *
    * @apiError (Unauthorized 401)  Unauthorized  Only authenticated Users can access the data
    */
-  .get(authorize(), validate(stationValidation.listStations), controller.list)
+  // .get(authorize(), validate(stationValidation.listStations), controller.list)
+  .get(validate(stationValidation.listStations), controller.list)
   .post(authorize(ADMIN), validate(stationValidation.createStation), controller.create);
 
 export default stationRouter;
