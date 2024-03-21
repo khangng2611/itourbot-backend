@@ -19,7 +19,8 @@ export default {
     uri: process.env.NODE_ENV === 'test' ? process.env.MONGO_URI_TESTS : process.env.MONGO_URI,
   },
   redisURI: process.env.REDIS_URI,
-  logs: process.env.NODE_ENV === 'production' ? 'combined' : 'dev',
+  // logs: process.env.NODE_ENV === 'production' ? 'combined' : 'dev',
+  logs: ':ip :user :team [:date[clf]] :method :url :response-time',
   googleConfig: {
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,

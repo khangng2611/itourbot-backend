@@ -1,11 +1,11 @@
 import express from 'express';
-import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import compress from 'compression';
 import methodOverride from 'method-override';
 import cors from 'cors';
 import helmet from 'helmet';
 import passport from 'passport';
+import morgan from './morgan.js';
 import config from './config.js';
 import router from '../api/routes/v1/index.js';
 import * as strategies from './passport.js';
