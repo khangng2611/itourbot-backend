@@ -18,6 +18,10 @@ const stationValidation = {
       rating: Joi.number(),
       imgUrl: Joi.string().uri().required(),
       description: Joi.string(),
+      location: Joi.object().keys({
+        x: Joi.number().required(),
+        y: Joi.number().required(),
+      }).required(),
     },
   },
 

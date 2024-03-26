@@ -15,6 +15,10 @@ const stationSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  location: {
+    x: Number,
+    y: Number,
+  },
   rating: {
     type: Number,
     min: 0,
@@ -49,10 +53,10 @@ stationSchema.statics = {
   },
 
   async add({
-    name, stationId, rating = 5, imgUrl, description = '',
+    name, stationId, rating = 5, imgUrl, description = '', location,
   }) {
     const result = this.create({
-      name, stationId, rating, imgUrl, description,
+      name, stationId, rating, imgUrl, description, location,
     });
     return result;
   },
