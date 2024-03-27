@@ -6,6 +6,9 @@ import tourValidation from '../../validations/tour.validation.js';
 
 const tourRouter = express.Router();
 
+tourRouter.route('/mockup')
+  .post(validate(tourValidation.createTour), controller.createMockup);
+
 tourRouter.route('/')
   .get(authorize(), validate(tourValidation.listTours), controller.list)
   .post(authorize(), validate(tourValidation.createTour), controller.create)

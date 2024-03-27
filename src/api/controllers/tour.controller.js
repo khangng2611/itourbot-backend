@@ -1,4 +1,5 @@
 import HttpStatus from 'http-status';
+import mongoose from 'mongoose';
 import Tour from '../models/tour.model.js';
 import APIError from '../errors/api-error.js';
 /**
@@ -17,6 +18,17 @@ export const list = async (req, res, next) => {
 export const create = async (req, res, next) => {
   try {
     const tour = await Tour.add({ userId: req.user._id, ...req.body });
+    res.status(HttpStatus.CREATED);
+    res.json(tour);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const createMockup = async (req, res, next) => {
+  try {
+    const userId = mongoose.Types.ObjectId('65f90358f31cb91a811c83c3');
+    const tour = await Tour.add({ userId, ...req.body });
     res.status(HttpStatus.CREATED);
     res.json(tour);
   } catch (error) {
