@@ -4,6 +4,8 @@ const authValidation = {
   // POST /v1/auth/register
   register: {
     body: {
+      name: Joi.string()
+        .required(),
       email: Joi.string()
         .email()
         .required(),

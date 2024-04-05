@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import HttpStatus from 'http-status';
 import APIError from '../errors/api-error.js';
 
-const statuses = ['waiting', 'picking', 'leading', 'canceled', 'done'];
+const statuses = ['picking', 'leading', 'canceled', 'done'];
 /**
  * Tour History Schema
  * @private
@@ -24,7 +24,7 @@ const tourSchema = new mongoose.Schema({
   status: {
     type: String,
     enum: statuses,
-    default: 'waiting',
+    default: 'picking',
   },
 }, {
   timestamps: true,
