@@ -72,6 +72,7 @@ tourSchema.statics = {
     const result = await this.find(options)
       .skip(perpage * (page - 1))
       .limit(perpage)
+      .sort({ createdAt: -1 })
       .exec();
     return result;
   },
