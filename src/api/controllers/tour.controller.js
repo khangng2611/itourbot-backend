@@ -17,7 +17,7 @@ export const list = async (req, res, next) => {
       const toStation = stations.find((station) => station.stationId === tour.toStation);
       const item = {
         _id: tour._id,
-        _status: tour.status,
+        status: tour.status,
         userId: tour.userId,
         fromStation: {
           stationId: tour.fromStation,
@@ -63,4 +63,14 @@ export const updateStatus = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+export const getCurrent = async (req, res, next) => {
+  const lastestTourArr = await Tour.list({ perpage: 1 }, req.user._id);
+  const [latestTour] = lastestTourArr;
+  console.log(latestTour);
+  if (latestTour.status === 'picking' || latestTour.status === 'leading') {
+    res.json(latestTour);
+  }
+  res.json({});
 };
