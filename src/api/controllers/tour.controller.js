@@ -1,5 +1,6 @@
 import HttpStatus from 'http-status';
 import Tour from '../models/tour.model.js';
+import Station from '../models/station.model.js';
 import APIError from '../errors/api-error.js';
 /**
  * Get user list
@@ -7,8 +8,31 @@ import APIError from '../errors/api-error.js';
  */
 export const list = async (req, res, next) => {
   try {
-    const tours = await Tour.list(req.query, req.user._id);
-    res.json(tours);
+    const [tours, stations] = await Promise.all([
+      Tour.list(req.query, req.user._id),
+      Station.list({}),
+    ]);
+    const formattedTours = tours.map((tour) => {
+      const fromStation = stations.find((station) => station.stationId === tour.fromStation);
+      const toStation = stations.find((station) => station.stationId === tour.toStation);
+      const item = {
+        _id: tour._id,
+        _status: tour.status,
+        userId: tour.userId,
+        fromStation: {
+          stationId: tour.fromStation,
+          stationName: fromStation.name,
+        },
+        toStation: {
+          stationId: tour.toStation,
+          stationName: toStation.name,
+        },
+        createdAt: tour.createdAt,
+        updatedAt: tour.updatedAt,
+      };
+      return item;
+    });
+    res.json(formattedTours);
   } catch (error) {
     next(error);
   }
