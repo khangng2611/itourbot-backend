@@ -58,8 +58,17 @@ tourSchema.statics = {
      * @param {number} limit - Limit number of users to be returned.
      * @returns {Promise<Tour[]>}
      */
-  async list({ page = 1, perpage = 20, status = '' }, userId) {
-    const options = status ? { userId, status } : { userId };
+  async list({
+    page = 1, perpage = 20, status = '', id = '',
+  }, userId) {
+    if (id) {
+      const result = await this.findById(id).exec();
+      return [result];
+    }
+    const options = {
+      status: status || { $ne: null },
+      userId,
+    };
     const result = await this.find(options)
       .skip(perpage * (page - 1))
       .limit(perpage)
