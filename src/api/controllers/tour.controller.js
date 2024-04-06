@@ -66,11 +66,38 @@ export const updateStatus = async (req, res, next) => {
 };
 
 export const getCurrent = async (req, res, next) => {
-  const lastestTourArr = await Tour.list({ perpage: 1 }, req.user._id);
-  const [latestTour] = lastestTourArr;
-  console.log(latestTour);
-  if (latestTour.status === 'picking' || latestTour.status === 'leading') {
-    res.json(latestTour);
+  try {
+    const [lastestTourArr, stations] = await Promise.all([
+      Tour.list({ perpage: 1 }, req.user._id),
+      Station.list({}),
+    ]);
+    const [latestTour] = lastestTourArr;
+    if (latestTour.status === 'picking' || latestTour.status === 'leading') {
+      const fromStation = stations.find((station) => station.stationId === latestTour.fromStation);
+      const toStation = stations.find((station) => station.stationId === latestTour.toStation);
+      const formattedTour = {
+        _id: latestTour._id,
+        status: latestTour.status,
+        userId: latestTour.userId,
+        fromStation: {
+          stationId: latestTour.fromStation,
+          stationName: fromStation.name,
+          location: fromStation.location,
+          description: fromStation.description,
+        },
+        toStation: {
+          stationId: latestTour.toStation,
+          stationName: toStation.name,
+          location: toStation.location,
+          description: toStation.description,
+        },
+        createdAt: latestTour.createdAt,
+        updatedAt: latestTour.updatedAt,
+      };
+      return res.json(formattedTour);
+    }
+  } catch (error) {
+    next(error);
   }
-  res.json({});
+  return res.json({});
 };
