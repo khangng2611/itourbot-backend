@@ -21,11 +21,11 @@ export const list = async (req, res, next) => {
         userId: tour.userId,
         fromStation: {
           stationId: tour.fromStation,
-          stationName: fromStation.name,
+          name: fromStation.name,
         },
         toStation: {
           stationId: tour.toStation,
-          stationName: toStation.name,
+          name: toStation.name,
         },
         createdAt: tour.createdAt,
         updatedAt: tour.updatedAt,
@@ -81,13 +81,13 @@ export const getCurrent = async (req, res, next) => {
         userId: latestTour.userId,
         fromStation: {
           stationId: latestTour.fromStation,
-          stationName: fromStation.name,
+          name: fromStation.name,
           location: fromStation.location,
           description: fromStation.description,
         },
         toStation: {
           stationId: latestTour.toStation,
-          stationName: toStation.name,
+          name: toStation.name,
           location: toStation.location,
           description: toStation.description,
         },
