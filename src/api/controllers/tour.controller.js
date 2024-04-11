@@ -74,23 +74,25 @@ export const getCurrent = async (req, res, next) => {
     const [latestTour] = lastestTourArr;
     if (latestTour.status === 'picking' || latestTour.status === 'leading') {
       const fromStation = stations.find((station) => station.stationId === latestTour.fromStation);
-      const toStation = stations.find((station) => station.stationId === latestTour.toStation);
+      // const toStation = stations.find((station) => station.stationId === latestTour.toStation);
       const formattedTour = {
         _id: latestTour._id,
         status: latestTour.status,
         userId: latestTour.userId,
+        lastStation: latestTour.lastStation,
         fromStation: {
           stationId: latestTour.fromStation,
           name: fromStation.name,
           location: fromStation.location,
           description: fromStation.description,
         },
-        toStation: {
-          stationId: latestTour.toStation,
-          name: toStation.name,
-          location: toStation.location,
-          description: toStation.description,
-        },
+        // toStation: {
+        //   stationId: latestTour.toStation,
+        //   name: toStation.name,
+        //   location: toStation.location,
+        //   description: toStation.description,
+        // },
+        toStation: latestTour.toStation,
         createdAt: latestTour.createdAt,
         updatedAt: latestTour.updatedAt,
       };

@@ -15,7 +15,7 @@ const tourValidation = {
   createTour: {
     body: {
       fromStation: Joi.number().required(),
-      toStation: Joi.number().required(),
+      toStation: Joi.array().items(Joi.number().required()).required(),
     },
   },
   updateStatus: {

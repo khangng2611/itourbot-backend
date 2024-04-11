@@ -18,13 +18,16 @@ const tourSchema = new mongoose.Schema({
     required: true,
   },
   toStation: {
-    type: Number,
+    type: [Number],
     required: true,
   },
   status: {
     type: String,
     enum: statuses,
     default: 'picking',
+  },
+  lastStation: {
+    type: Number,
   },
 }, {
   timestamps: true,
@@ -76,14 +79,19 @@ tourSchema.statics = {
       .exec();
     return result;
   },
-  async add({ userId, fromStation, toStation }) {
-    if (fromStation === toStation) {
+  async add({ userId, fromStation, toStation = [] }) {
+    if (toStation.includes(fromStation)) {
       throw new APIError({
-        message: 'fromStation must be differnt with toStation',
+        message: 'fromStation must not be included in toStation',
         status: HttpStatus.FORBIDDEN,
       });
     }
-    const result = await this.create({ userId, fromStation, toStation });
+    const result = await this.create({
+      userId,
+      fromStation,
+      toStation,
+      lastStation: fromStation,
+    });
     return result;
   },
 };
