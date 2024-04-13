@@ -46,29 +46,7 @@ export const getCurrent = async (req, res, next) => {
     const lastestTourArr = await Tour.list({ perpage: 1 }, req.user._id);
     const [latestTour] = lastestTourArr;
     if (latestTour.status === 'picking' || latestTour.status === 'leading') {
-      const formattedTour = {
-        _id: latestTour._id,
-        status: latestTour.status,
-        userId: latestTour.userId,
-        lastStation: latestTour.lastStation,
-        // fromStation: {
-        //   stationId: latestTour.fromStation,
-        //   name: fromStation.name,
-        //   location: fromStation.location,
-        //   description: fromStation.description,
-        // },
-        // toStation: {
-        //   stationId: latestTour.toStation,
-        //   name: toStation.name,
-        //   location: toStation.location,
-        //   description: toStation.description,
-        // },
-        fromStation: lastestTourArr.fromStation,
-        toStation: latestTour.toStation,
-        createdAt: latestTour.createdAt,
-        updatedAt: latestTour.updatedAt,
-      };
-      return res.json(formattedTour);
+      return res.json(latestTour);
     }
   } catch (error) {
     next(error);
