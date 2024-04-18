@@ -6,6 +6,9 @@ import stationValidation from '../../validations/station.validation.js';
 
 const stationRouter = express.Router();
 
+stationRouter.route('/search')
+  .get(authorize(), controller.search);
+
 stationRouter.route('/')
   /**
    * @api {get} v1/stations List Stations

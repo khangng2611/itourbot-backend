@@ -41,7 +41,7 @@ export const updateStatus = async (req, res, next) => {
   }
 };
 
-export const getCurrent = async (req, res, next) => {
+export const current = async (req, res, next) => {
   try {
     const lastestTourArr = await Tour.list({ perpage: 1 }, req.user._id);
     const [latestTour] = lastestTourArr;

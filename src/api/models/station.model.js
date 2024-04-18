@@ -62,4 +62,7 @@ stationSchema.statics = {
   },
 };
 
-export default mongoose.model('Station', stationSchema);
+stationSchema.index({ name: 'text', description: 'text' });
+
+const Station = mongoose.model('Station', stationSchema);
+export default Station;

@@ -20,3 +20,13 @@ export const create = async (req, res, next) => {
     next(error);
   }
 };
+
+export const search = async (req, res, next) => {
+  try {
+    const { text } = req.query;
+    const results = await Station.find({ $text: { $search: text } });
+    res.json(results);
+  } catch (error) {
+    next(error);
+  }
+};

@@ -6,7 +6,7 @@ import tourValidation from '../../validations/tour.validation.js';
 
 const tourRouter = express.Router();
 
-tourRouter.route('/current').get(authorize(), controller.getCurrent);
+tourRouter.route('/current').get(authorize(), controller.current);
 
 tourRouter.route('/')
   .get(authorize(), validate(tourValidation.listTours), controller.list)
