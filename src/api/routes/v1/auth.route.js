@@ -88,8 +88,11 @@ authRouter.route('/login')
 authRouter.route('/refresh-token')
   .post(validate(authValidation.refresh), controller.refresh);
 
-authRouter.route('/send-password-reset')
-  .post(validate(authValidation.sendPasswordReset), controller.sendPasswordReset);
+authRouter.route('/forgot-password')
+  .post(validate(authValidation.sendPasswordReset), controller.forgotPassword);
+
+authRouter.route('/verify-passcode')
+  .post(validate(authValidation.verfiyPasscode), controller.verifyResetPasswordCode);
 
 authRouter.route('/reset-password')
   .post(validate(authValidation.passwordReset), controller.resetPassword);

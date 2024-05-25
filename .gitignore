@@ -47,7 +47,9 @@ jspm_packages
 
 .vscode/
 .github/
-services/
 .travis.yml
 deploy.sh
 .DS_Store
+src/api/services/emails/passwordChange
+src/api/services/emails/passwordReset
+src/api/services/emails/emailProvider.js

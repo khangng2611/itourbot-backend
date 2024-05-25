@@ -3,11 +3,12 @@ import moment from 'moment-timezone';
 import _ from 'lodash';
 import crypto from 'crypto';
 import User from '../models/user.model.js';
-import PasswordResetToken from '../models/passwordResetToken.model.js';
+// import PasswordResetToken from '../models/passwordResetToken.model.js';
 import config from '../../config/config.js';
 import APIError from '../errors/api-error.js';
-import { redisClient } from '../../config/redis.js';
+import * as redis from '../../config/redis.js';
 // import * as emailProvider from '../services/emails/emailProvider.js';
+import { sendResetPasswordEmail, sendConfirmChangePassword } from '../services/emails/sendEmail.js';
 
 /**
  * Generate refresh token
@@ -15,9 +16,9 @@ import { redisClient } from '../../config/redis.js';
 async function generateRefreshToken(user) {
   const userId = user._id;
   const userEmail = user.email;
-  const keyName = `auth:${userEmail}:refresh_token`;
+  const keyName = redis.getRefreshTokenKey(userEmail);
   const token = `${userId}.${crypto.randomBytes(40).toString('hex')}`;
-  await redisClient.setEx(keyName, config.refreshExpirationDays * 86400, token);
+  redis.client.setEx(keyName, config.refreshExpirationDays * 86400, token);
   return token;
 }
 
@@ -27,7 +28,7 @@ async function generateRefreshToken(user) {
  */
 async function generateTokenResponse(accessToken, refreshToken) {
   const tokenType = 'Bearer';
-  const expiresIn = moment().add(config.jwtExpirationInterval, 'minutes');
+  const expiresIn = moment().add(config.jwtExpirationMinutes, 'minutes');
   return {
     tokenType,
     accessToken,
@@ -77,8 +78,8 @@ export const login = async (req, res, next) => {
 export const refresh = async (req, res, next) => {
   try {
     const { email, refreshToken } = req.body;
-    const keyName = `auth:${email}:refresh_token`;
-    const token = await redisClient.get(keyName);
+    const keyName = redis.getRefreshTokenKey(email);
+    const token = await redis.client.get(keyName);
     const err = {
       status: HttpStatus.UNAUTHORIZED,
       isPublic: true,
@@ -100,7 +101,19 @@ export const refresh = async (req, res, next) => {
   }
 };
 
-export const sendPasswordReset = async (req, res, next) => {
+/**
+ * Generate refresh token
+*/
+async function generatePasswordResetCode(email) {
+  const keyName = redis.getResetPasswordKey(email);
+  const passCode = `${crypto.randomInt(999999).toString().padStart(6, '0')}`;
+
+  // const hashedCode = await bcrypt.hash(passCode, 10);
+  redis.client.setEx(keyName, 3600, passCode); // expires in 1 hour
+  return passCode;
+}
+
+export const forgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
     const user = await User.findOne({ email }).exec();
@@ -108,8 +121,10 @@ export const sendPasswordReset = async (req, res, next) => {
     if (user) {
       // const passwordResetObj = await PasswordResetToken.generate(user);
       // emailProvider.sendPasswordReset(passwordResetObj);
+      const resetCode = await generatePasswordResetCode(email);
+      sendResetPasswordEmail(email, resetCode);
       res.status(HttpStatus.OK);
-      return res.json('success');
+      return res.json({ success: true });
     }
     throw new APIError({
       status: HttpStatus.UNAUTHORIZED,
@@ -120,34 +135,57 @@ export const sendPasswordReset = async (req, res, next) => {
   }
 };
 
+export const verifyResetPasswordCode = async (req, res, next) => {
+  try {
+    const { email, passcode } = req.body;
+    const keyName = redis.getResetPasswordKey(email);
+    const code = await redis.client.get(keyName);
+    if (code === passcode) {
+      res.status(HttpStatus.OK);
+      return res.json({ success: true });
+    }
+    throw new APIError({
+      status: HttpStatus.UNAUTHORIZED,
+      message: 'Invalid code',
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
 export const resetPassword = async (req, res, next) => {
   try {
-    const { email, password, resetToken } = req.body;
-    const resetTokenObject = await PasswordResetToken.findOneAndRemove({
-      userEmail: email,
-      resetToken,
-    });
-
+    const { email, password, passcode } = req.body;
+    // const resetTokenObject = await PasswordResetToken.findOneAndRemove({
+    //   userEmail: email,
+    //   resetToken,
+    // });
+    const keyName = redis.getResetPasswordKey(email);
+    const code = await redis.client.get(keyName);
     const err = {
       status: HttpStatus.UNAUTHORIZED,
       isPublic: true,
     };
-    if (!resetTokenObject) {
-      err.message = 'Cannot find matching reset token';
+    if (!code) {
+      err.message = 'Passcode is invalid';
       throw new APIError(err);
     }
-    if (moment().isAfter(resetTokenObject.expires)) {
-      err.message = 'Reset token is expired';
+    // if (moment().isAfter(resetTokenObject.expires)) {
+    //   err.message = 'Reset token is expired';
+    //   throw new APIError(err);
+    // }
+    if (code !== passcode) {
+      err.message = 'Passcode is incorrect';
       throw new APIError(err);
     }
-
-    const user = await User.findOne({ email: resetTokenObject.userEmail }).exec();
+    redis.client.del(keyName);
+    const user = await User.findOne({ email }).exec();
     user.password = password;
     await user.save();
     // emailProvider.sendPasswordChangeEmail(user);
-
+    sendConfirmChangePassword(email);
     res.status(HttpStatus.OK);
-    return res.json('Password Updated');
+    return res.json({ success: true, msg: 'Password Updated' });
   } catch (error) {
     return next(error);
   }

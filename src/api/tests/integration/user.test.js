@@ -533,7 +533,7 @@ describe('Users API', async () => {
       const expiredAccessToken = (await User.findAndGenerateToken(dbUsers.branStark)).accessToken;
 
       // move clock forward by minutes set in config + 1 minute
-      clock.tick((config.jwtExpirationInterval * 60000) + 60000);
+      clock.tick((config.jwtExpirationMinutes * 60000) + 60000);
 
       return request(app)
         .get('/v1/users/profile')

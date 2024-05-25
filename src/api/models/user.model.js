@@ -8,7 +8,7 @@ import pkg from 'uuid';
 import APIError from '../errors/api-error.js';
 import config from '../../config/config.js';
 
-const { env, jwtExpirationInterval, jwtSecret } = config;
+const { env, jwtExpirationMinutes, jwtSecret } = config;
 const { v4: uuidv4 } = pkg;
 
 /**
@@ -94,7 +94,7 @@ userSchema.method({
   // return access token
   token() {
     const payload = {
-      exp: moment().add(jwtExpirationInterval, 'minutes').unix(),
+      exp: moment().add(jwtExpirationMinutes, 'minutes').unix(),
       iat: moment().unix(),
       sub: this._id,
     };

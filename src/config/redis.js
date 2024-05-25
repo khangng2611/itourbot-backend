@@ -1,12 +1,12 @@
 import redis from '@redis/client';
 import config from './config.js';
 
-const redisClient = redis.createClient({
+const client = redis.createClient({
   url: config.redisURI,
 });
 
 export async function redisConnect() {
-  const connection = redisClient
+  const connection = client
     .connect()
     .then(() => console.log('Redis connected !'))
     .catch((error) => {
@@ -16,4 +16,12 @@ export async function redisConnect() {
   return connection;
 }
 
-export { redisClient };
+function getRefreshTokenKey(email) {
+  return `auth:${email}:refresh_token`;
+}
+
+function getResetPasswordKey(email) {
+  return `auth:${email}:password_reset_code`;
+}
+
+export { client, getRefreshTokenKey, getResetPasswordKey };

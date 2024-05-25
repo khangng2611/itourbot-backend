@@ -13,7 +13,7 @@ export default {
   port: process.env.PORT,
   baseURL: process.env.BASE_URL,
   jwtSecret: process.env.JWT_SECRET,
-  jwtExpirationInterval: process.env.JWT_EXPIRATION_MINUTES,
+  jwtExpirationMinutes: process.env.JWT_EXPIRATION_MINUTES,
   refreshExpirationDays: process.env.REFRESH_TOKEN_EXPIRATION_DAYS,
   mongo: {
     uri: process.env.NODE_ENV === 'test' ? process.env.MONGO_URI_TESTS : process.env.MONGO_URI,

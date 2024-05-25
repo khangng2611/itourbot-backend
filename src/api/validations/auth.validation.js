@@ -37,6 +37,16 @@ const authValidation = {
   },
 
   // POST /v1/auth/refresh
+  verfiyPasscode: {
+    body: {
+      email: Joi.string()
+        .email()
+        .required(),
+      passcode: Joi.string().required().length(6),
+    },
+  },
+
+  // POST /v1/auth/refresh
   sendPasswordReset: {
     body: {
       email: Joi.string()
@@ -55,7 +65,7 @@ const authValidation = {
         .required()
         .min(6)
         .max(128),
-      resetToken: Joi.string().required(),
+      passcode: Joi.string().required(),
     },
   },
 };
