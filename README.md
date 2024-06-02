@@ -3,8 +3,6 @@
 The backend service for iTourbot project which building RESTful APIs and microservices using Node.js, Express and MongoDB
 
 ## Features
-
- - No transpilers, just vanilla javascript
  - ES2017 latest features like Async/Await
  - CORS enabled
  - Uses [yarn](https://yarnpkg.com)
@@ -141,12 +139,3 @@ Run deploy script:
 ```bash
 yarn deploy
 ```
-
-## Inspirations
-
- - [KunalKapadia/express-mongoose-es6-rest-api](https://github.com/KunalKapadia/express-mongoose-es6-rest-api)
- - [diegohaz/rest](https://github.com/diegohaz/rest)
-
-## License
-
-[MIT License](README.md) - [Daniel Sousa](https://github.com/danielfsousa)
